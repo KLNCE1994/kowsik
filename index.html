@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch the Falling Object</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: lightblue;
+            text-align: center;
+        }
+        canvas {
+            background-color: white;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <h2>Catch the Falling Object Game</h2>
+    <canvas id="gameCanvas" width="400" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        let basket = { x: 170, y: 450, width: 60, height: 10 };
+        let apple = { x: Math.random() * 380, y: 0, radius: 10, speed: 2 };
+        let score = 0;
+        
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowLeft" && basket.x > 0) {
+                basket.x -= 20;
+            } else if (event.key === "ArrowRight" && basket.x < 340) {
+                basket.x += 20;
+            }
+        });
+        
+        function drawBasket() {
+            ctx.fillStyle = "brown";
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+        }
+        
+        function drawApple() {
+            ctx.beginPath();
+            ctx.arc(apple.x, apple.y, apple.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            ctx.closePath();
+        }
+        
+        function updateGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBasket();
+            drawApple();
+            apple.y += apple.speed;
+            
+            if (apple.y > canvas.height) {
+                apple.x = Math.random() * 380;
+                apple.y = 0;
+            }
+            
+            if (apple.y + apple.radius >= basket.y && apple.x >= basket.x && apple.x <= basket.x + basket.width) {
+                score++;
+                apple.x = Math.random() * 380;
+                apple.y = 0;
+            }
+            
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "black";
+            ctx.fillText("Score: " + score, 10, 20);
+            requestAnimationFrame(updateGame);
+        }
+        
+        updateGame();
+    </script>
+</body>
+</html>
